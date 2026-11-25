@@ -809,6 +809,8 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 /* 넓은 화면 */
 @media (min-width: 700px) {
   .cards { grid-template-columns: 1fr 1fr; }
+  /* 탭이 화면 밖으로 잘리지 않게 줄바꿈 */
+  .tabs { flex-wrap: wrap; overflow-x: visible; row-gap: 8px; }
   .sheet {
     bottom: auto;
     top: 50%;

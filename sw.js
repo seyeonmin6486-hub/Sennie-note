@@ -1,5 +1,5 @@
 /* 센니 노트 서비스워커 — 오프라인에서도 열리고, 업데이트는 다음 실행에 반영 */
-var CACHE = 'senni-note-v4';
+var CACHE = 'senni-note-v5';
 var ASSETS = [
   './',
   './index.html',
