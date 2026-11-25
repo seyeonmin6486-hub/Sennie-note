@@ -266,7 +266,12 @@
       if (s) title = cat.name + ' · ' + s.name;
     }
     if (q) title = '“' + state.q.trim() + '” 검색 결과';
-    if (state.insta) title = '📸 ' + title;
+    if (state.insta) {
+      var sl = state.status !== 'all' ? STATUS_META[state.status].label : '';
+      if (q) title = '📸 ' + title;
+      else if (sl && cat) title = '📸 ' + cat.name + ' · ' + sl;
+      else title = '📸 ' + (sl || title);
+    }
     $('listTitle').textContent = title;
     $('listCount').textContent = list.length ? list.length + '개' : '';
 
