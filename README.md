@@ -2,7 +2,7 @@
 
 센니의 살림 · 레시피 · 최저가 기록을 한 곳에 모아 두는 개인용 모바일 웹앱(PWA).
 
-- 사이트: https://seyeonmin6486-hub.github.io/senni-note/
+- 사이트: https://seyeonmin6486-hub.github.io/Sennie-note/
 - 아이폰 Safari에서 열고 **공유 → 홈 화면에 추가** 하면 앱처럼 전체 화면으로 실행됩니다.
 
 ## 쓰는 법
