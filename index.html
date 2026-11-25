@@ -59,6 +59,8 @@
   </header>
 
   <main class="content">
+    <div class="status-filter" id="statusFilter" role="group" aria-label="진행 상태 필터" hidden></div>
+
     <div class="list-head">
       <h1 class="list-title" id="listTitle">전체 노트</h1>
       <span class="list-count" id="listCount"></span>
@@ -100,6 +102,7 @@
     <h2 class="sheet-title" id="sheetTitle"></h2>
     <p class="sheet-meta" id="sheetMeta"></p>
     <div class="insta-card" id="sheetInsta" hidden></div>
+    <div class="studio" id="sheetStudio" hidden></div>
     <div class="sheet-body" id="sheetBody"></div>
 
     <div class="links" id="sheetLinks"></div>
@@ -165,6 +168,62 @@
       </span>
       <input type="checkbox" id="fInsta" class="switch" />
     </label>
+
+    <details class="more">
+      <summary>
+        <span class="more-title">🎬 크리에이터 스튜디오</span>
+        <span class="more-sub">대본 · 캡션 · 제휴링크 <em>선택</em></span>
+      </summary>
+      <div class="more-body">
+        <div class="field">
+          <span class="field-label">진행 상태</span>
+          <div class="pick pick-status" id="fStatus" role="radiogroup" aria-label="진행 상태 선택"></div>
+        </div>
+
+        <div class="field">
+          <span class="field-label">15초 릴스 대본 <em>선택</em></span>
+          <div class="script-inputs">
+            <label class="script-input">
+              <span>0~3초 훅</span>
+              <input id="fScriptHook" type="text" maxlength="90" placeholder="첫 3초에 던질 한 줄" />
+            </label>
+            <label class="script-input">
+              <span>3~12초 핵심</span>
+              <textarea id="fScriptCore" rows="3" placeholder="보여줄 장면과 말할 내용"></textarea>
+            </label>
+            <label class="script-input">
+              <span>12~15초 CTA</span>
+              <input id="fScriptCta" type="text" maxlength="90" placeholder="저장·팔로우 유도 한 줄" />
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field-label">캡션 + 해시태그 <em>선택</em></span>
+          <textarea id="fCaption" rows="4" placeholder="캡션 본문&#10;마지막 줄에 #해시태그 #여러개"></textarea>
+        </div>
+
+        <div class="field">
+          <span class="field-label">고정 댓글 <em>선택</em></span>
+          <textarea id="fPinned" rows="2" placeholder="구매처 · 주의사항 · 추가 팁"></textarea>
+        </div>
+
+        <div class="field">
+          <span class="field-label">제휴 · 쿠팡파트너스 링크 <em>선택</em></span>
+          <input id="fAffiliate" type="url" inputmode="url" placeholder="https://link.coupang.com/..." />
+        </div>
+
+        <div class="field">
+          <span class="field-label">레퍼런스 링크 <em>선택</em></span>
+          <input id="fRefUrl" type="url" inputmode="url" placeholder="벤치마킹한 릴스 · 게시물 링크" />
+        </div>
+
+        <div class="field">
+          <span class="field-label">떡상 포인트 <em>선택</em></span>
+          <input id="fViral" type="text" maxlength="120" placeholder="왜 반응이 좋았는지 한 줄" />
+        </div>
+      </div>
+    </details>
 
     <p class="form-note">메모는 이 기기(브라우저)에만 저장돼요.</p>
     <div class="form-foot">

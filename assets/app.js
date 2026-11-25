@@ -4,14 +4,25 @@
 
   var CATS = window.SENNI_CATEGORIES || [];
   var BUILTIN = window.SENNI_NOTES || [];
+  var STUDIO = window.SENNI_STUDIO || {};
   var STORE_NOTES = 'senni-note.notes.v1';
   var STORE_CHECKS = 'senni-note.checks.v1';
   var STORE_INSTA = 'senni-note.insta.v1';
+  var STORE_STATUS = 'senni-note.status.v1';
+  var STORE_AFF = 'senni-note.affiliate.v1';
+  var STORE_REF = 'senni-note.ref.v1';
+
+  var STATUS_META = {
+    idea:     { label: '소재 쪔',     icon: '💡' },
+    scripted: { label: '대본 완료',   icon: '✍️' },
+    posted:   { label: '업로드 완료', icon: '✅' }
+  };
+  var STATUS_ORDER = ['idea', 'scripted', 'posted'];
 
   var catMap = {};
   CATS.forEach(function (c) { catMap[c.id] = c; });
 
-  var state = { cat: 'all', sub: 'all', q: '', insta: false };
+  var state = { cat: 'all', sub: 'all', q: '', insta: false, status: 'all' };
 
   /* ── 저장소 ── */
   function load(key, fallback) {
@@ -28,6 +39,9 @@
   var userNotes = load(STORE_NOTES, []);
   var checks = load(STORE_CHECKS, {});
   var instaPrefs = load(STORE_INSTA, {});
+  var statusPrefs = load(STORE_STATUS, {});
+  var affPrefs = load(STORE_AFF, {});
+  var refPrefs = load(STORE_REF, {});
 
   function isInsta(n) {
     if (!n) return false;
@@ -36,8 +50,41 @@
   }
 
   function allNotes() {
-    return BUILTIN.map(function (n) { return Object.assign({ builtin: true }, n); })
-      .concat(userNotes.map(function (n) { return Object.assign({ builtin: false }, n); }));
+    return BUILTIN.map(function (n) {
+      return Object.assign({ builtin: true }, n, STUDIO[n.id] || {});
+    }).concat(userNotes.map(function (n) { return Object.assign({ builtin: false }, n); }));
+  }
+
+  /* ── 진행 상태 · 제휴링크 · 레퍼런스 ── */
+  function statusOf(n) {
+    if (!n) return null;
+    if (Object.prototype.hasOwnProperty.call(statusPrefs, n.id)) {
+      return STATUS_META[statusPrefs[n.id]] ? statusPrefs[n.id] : null;
+    }
+    if (n.status && STATUS_META[n.status]) return n.status;
+    return isInsta(n) ? 'idea' : null;
+  }
+
+  function setStatus(id, st) {
+    if (!STATUS_META[st]) return;
+    statusPrefs[id] = st;
+    save(STORE_STATUS, statusPrefs);
+  }
+
+  function affOf(n) {
+    if (!n) return '';
+    return String(Object.prototype.hasOwnProperty.call(affPrefs, n.id) ? affPrefs[n.id] : (n.affiliateUrl || '')) || '';
+  }
+  function refOf(n) {
+    if (!n) return '';
+    return String(Object.prototype.hasOwnProperty.call(refPrefs, n.id) ? refPrefs[n.id] : (n.refUrl || '')) || '';
+  }
+  function hasScript(n) {
+    var s = (n && n.script) || {};
+    return !!(s.hook || s.core || s.cta);
+  }
+  function hasCaption(n) {
+    return !!(n && (n.caption || (n.hashtags || []).length || n.pinnedComment));
   }
 
   /* ── 유틸 ── */
@@ -94,6 +141,9 @@
       if (b.rows) parts.push(b.rows.map(function (r) { return r.join(' '); }).join(' '));
     });
     (n.links || []).forEach(function (l) { parts.push(l.label + ' ' + l.url); });
+    var s = n.script || {};
+    parts.push(s.hook || '', s.core || '', s.cta || '');
+    parts.push(n.caption || '', (n.hashtags || []).join(' '), n.pinnedComment || '', n.viralReason || '');
     return norm(parts.join(' '));
   }
 
@@ -119,6 +169,7 @@
       if (state.cat !== 'all' && n.cat !== state.cat) return false;
       if (state.sub !== 'all' && n.sub !== state.sub) return false;
       if (state.insta && !isInsta(n)) return false;
+      if (state.insta && state.status !== 'all' && statusOf(n) !== state.status) return false;
       if (q && haystack(n).indexOf(q) === -1) return false;
       return true;
     });
@@ -185,6 +236,7 @@
     if (!b) return;
     if (b.dataset.insta) {
       state.insta = !state.insta;
+      state.status = 'all';
       renderTabs();
       renderList();
       return;
@@ -224,7 +276,12 @@
       $('emptyTitle').textContent = q ? '검색 결과가 없어요' : (state.insta ? '인스타 소재로 찜한 노트가 없어요' : '아직 노트가 없어요');
       $('emptyDesc').textContent = q
         ? '다른 단어로 찾아보거나, 이 내용을 새 메모로 남겨 두세요.'
-        : (state.insta ? '노트를 열어 [찜하기]를 누르면 이곳에 모여요.' : '새 메모를 추가해 보세요.');
+        : (state.insta
+            ? (state.status !== 'all'
+                ? '다른 상태를 골라 보거나, 노트를 열어 상태를 바꿔 보세요.'
+                : '노트를 열어 [찜하기]를 누르면 이곳에 모여요.')
+            : '새 메모를 추가해 보세요.');
+      renderStatusFilter();
       return;
     }
     emptyEl.hidden = true;
@@ -234,6 +291,8 @@
       var sn = subName(n);
       var tags = (n.tags || []).slice(0, 3).map(function (t) { return '<span class="tag">#' + esc(t) + '</span>'; }).join('');
       var desc = n.summary || firstText(n);
+      var st = statusOf(n);
+      var stMeta = st ? STATUS_META[st] : null;
       return '' +
         '<button class="card" type="button" data-id="' + esc(n.id) + '" style="--c:' + c.color + '">' +
           '<div class="card-top">' +
@@ -241,17 +300,59 @@
               '<span class="dot"></span>' + esc(c.name) +
             '</span>' +
             (sn ? '<span class="sub-label">' + esc(sn) + '</span>' : '') +
-            (isInsta(n) ? '<span class="insta-dot" aria-label="인스타 소재">📱</span>' : '') +
+            '<span class="card-badges">' +
+              (stMeta
+                ? '<span class="status-badge st-' + st + '"><span aria-hidden="true">' + stMeta.icon + '</span>' + stMeta.label + '</span>'
+                : '') +
+              (isInsta(n) ? '<span class="insta-dot" aria-label="인스타 소재">📱</span>' : '') +
+            '</span>' +
           '</div>' +
           '<span class="card-title">' + highlight(n.title, q) + '</span>' +
           '<span class="card-desc">' + highlight(desc, q) + '</span>' +
           '<div class="card-foot">' + tags +
+            (hasScript(n) ? '<span class="tag tag-script">🎬 대본</span>' : '') +
             '<svg class="card-arrow" viewBox="0 0 24 24" aria-hidden="true">' +
               '<path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
           '</div>' +
         '</button>';
     }).join('');
+    renderStatusFilter();
   }
+
+  /* ── 진행 상태 필터 (인스타 소재 탭) ── */
+  function renderStatusFilter() {
+    var el = $('statusFilter');
+    if (!state.insta) {
+      el.hidden = true;
+      el.innerHTML = '';
+      return;
+    }
+    var counts = { all: 0, idea: 0, scripted: 0, posted: 0 };
+    allNotes().forEach(function (n) {
+      if (!isInsta(n)) return;
+      if (state.cat !== 'all' && n.cat !== state.cat) return;
+      counts.all++;
+      var s = statusOf(n);
+      if (s && counts[s] != null) counts[s]++;
+    });
+    var html = '<button class="st-chip" type="button" data-st="all" aria-pressed="' + (state.status === 'all') + '">' +
+      '전체 <span class="n">' + counts.all + '</span></button>';
+    STATUS_ORDER.forEach(function (s) {
+      html += '<button class="st-chip st-' + s + '" type="button" data-st="' + s + '" aria-pressed="' + (state.status === s) + '">' +
+        '<span aria-hidden="true">' + STATUS_META[s].icon + '</span>' + STATUS_META[s].label +
+        ' <span class="n">' + counts[s] + '</span></button>';
+    });
+    el.innerHTML = html;
+    el.hidden = false;
+  }
+
+  $('statusFilter').addEventListener('click', function (e) {
+    var b = e.target.closest('.st-chip');
+    if (!b) return;
+    state.status = b.dataset.st;
+    renderStatusFilter();
+    renderList();
+  });
 
   function firstText(n) {
     var b = (n.blocks || []).filter(function (x) { return x.type === 'p' || x.type === 'h'; })[0];
@@ -382,6 +483,212 @@
     }
   });
 
+  /* ── 크리에이터 스튜디오 ── */
+  function scriptText(n) {
+    var s = (n && n.script) || {};
+    var out = [];
+    if (s.hook) out.push('[0~3초 훅]\n' + s.hook);
+    if (s.core) out.push('[3~12초 핵심]\n' + s.core);
+    if (s.cta) out.push('[12~15초 CTA]\n' + s.cta);
+    return out.join('\n\n');
+  }
+
+  function captionText(n) {
+    var out = [];
+    if (n.caption) out.push(String(n.caption).trim());
+    var tags = (n.hashtags || []).join(' ');
+    if (tags) out.push(tags);
+    if (n.pinnedComment) out.push('📌 고정 댓글\n' + n.pinnedComment);
+    return out.join('\n\n');
+  }
+
+  function currentNote() {
+    return allNotes().filter(function (x) { return x.id === currentId; })[0] || null;
+  }
+
+  function renderStudio(note) {
+    var el = $('sheetStudio');
+    if (!el) return;
+    var n = note || {};
+    var st = statusOf(note);
+    var s = (n && n.script) || {};
+    var html = '';
+
+    html += '<div class="studio-head">' +
+      '<span class="studio-title">🎬 크리에이터 스튜디오</span>' +
+      (st ? '<span class="studio-state st-' + st + '">' + STATUS_META[st].label + '</span>' : '') +
+      '</div>';
+
+    html += '<div class="pipe" role="group" aria-label="진행 상태">' +
+      STATUS_ORDER.map(function (k) {
+        return '<button class="pipe-btn st-' + k + '" type="button" data-pipe="' + k + '" aria-pressed="' + (st === k) + '">' +
+          '<span aria-hidden="true">' + STATUS_META[k].icon + '</span>' + STATUS_META[k].label + '</button>';
+      }).join('') + '</div>';
+
+    if (hasScript(n)) {
+      html += '<div class="studio-block">' +
+        '<div class="block-head"><b>15초 릴스 대본</b>' +
+          '<button class="mini-btn" type="button" data-action="copy-script">대본 복사</button></div>' +
+        '<div class="script-lines">' +
+          (s.hook ? '<div class="script-line"><span class="t">0~3초 훅</span><p>' + esc(s.hook) + '</p></div>' : '') +
+          (s.core ? '<div class="script-line"><span class="t">3~12초 핵심</span><p>' + esc(s.core) + '</p></div>' : '') +
+          (s.cta ? '<div class="script-line"><span class="t">12~15초 CTA</span><p>' + esc(s.cta) + '</p></div>' : '') +
+        '</div></div>';
+    }
+
+    if (hasCaption(n)) {
+      html += '<div class="studio-block">' +
+        '<div class="block-head"><b>캡션 + 해시태그 + 고정 댓글</b>' +
+          '<button class="mini-btn" type="button" data-action="copy-caption">캡션+댓글 복사</button></div>' +
+        (n.caption ? '<p class="cap-text">' + esc(n.caption).replace(/\n/g, '<br>') + '</p>' : '') +
+        ((n.hashtags || []).length
+          ? '<div class="hashtags">' + n.hashtags.map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('') + '</div>'
+          : '') +
+        (n.pinnedComment
+          ? '<div class="pinned"><span class="pin-label">📌 고정 댓글</span><p>' + esc(n.pinnedComment).replace(/\n/g, '<br>') + '</p></div>'
+          : '') +
+        '</div>';
+    }
+
+    var aff = affOf(n);
+    html += '<div class="studio-block">' +
+      '<div class="block-head"><b>🔗 제휴 · 쿠팡파트너스 링크</b></div>' +
+      '<div class="aff-row">' +
+        '<input class="aff-input" type="url" inputmode="url" autocomplete="off" aria-label="제휴 링크" ' +
+          'placeholder="링크를 붙여넣고 저장" value="' + esc(aff) + '" />' +
+        '<button class="mini-btn" type="button" data-action="aff-save">저장</button>' +
+      '</div>' +
+      '<div class="aff-actions">' +
+        '<button class="mini-btn ghost" type="button" data-action="aff-open">바로 열기 ↗</button>' +
+        '<button class="mini-btn ghost" type="button" data-action="aff-copy">링크 복사</button>' +
+      '</div>' +
+      '<p class="aff-hint">' + esc(aff
+        ? '이 기기에 저장됐어요. 앱을 다시 열어도 그대로 남아요.'
+        : '쿠팡파트너스에서 만든 링크를 넣어 두면 열기·복사가 바로 됩니다.') + '</p>' +
+    '</div>';
+
+    var ref = refOf(n);
+    html += '<div class="studio-block">' +
+      '<div class="block-head"><b>🔥 떡상 포인트</b></div>' +
+      (n.viralReason
+        ? '<p class="viral">' + esc(n.viralReason) + '</p>'
+        : '<p class="viral none">왜 반응이 좋았는지 한 줄만 적어 두면 다음 대본에 그대로 쓸 수 있어요.</p>') +
+      '<div class="aff-row">' +
+        '<input class="ref-input" type="url" inputmode="url" autocomplete="off" aria-label="레퍼런스 링크" ' +
+          'placeholder="레퍼런스 링크 (벤치마킹한 릴스)" value="' + esc(ref) + '" />' +
+        '<button class="mini-btn" type="button" data-action="ref-open">열기 ↗</button>' +
+      '</div>' +
+    '</div>';
+
+    if (!hasScript(n) && !hasCaption(n)) {
+      html += '<p class="studio-hint">새 메모를 쓸 때 [🎬 크리에이터 스튜디오]를 펼쳐 대본·캡션을 넣으면 여기서 한 번에 복사할 수 있어요.</p>';
+    }
+
+    el.innerHTML = html;
+    el.hidden = false;
+  }
+
+  function normalizeUrl(v) {
+    var s = String(v || '').trim();
+    if (!s) return '';
+    if (!/^https?:\/\//i.test(s)) s = 'https://' + s;
+    return s;
+  }
+
+  function saveAff(silent) {
+    var inp = document.querySelector('.aff-input');
+    if (!inp || !currentId) return '';
+    var v = normalizeUrl(inp.value);
+    affPrefs[currentId] = v;
+    save(STORE_AFF, affPrefs);
+    inp.value = v;
+    var hint = document.querySelector('.aff-hint');
+    if (hint) {
+      hint.textContent = v
+        ? '이 기기에 저장됐어요. 앱을 다시 열어도 그대로 남아요.'
+        : '쿠팡파트너스에서 만든 링크를 넣어 두면 열기·복사가 바로 됩니다.';
+    }
+    if (!silent) toast(v ? '제휴 링크를 저장했어요' : '제휴 링크를 지웠어요');
+    return v;
+  }
+
+  function saveRef(silent) {
+    var inp = document.querySelector('.ref-input');
+    if (!inp || !currentId) return '';
+    var v = normalizeUrl(inp.value);
+    refPrefs[currentId] = v;
+    save(STORE_REF, refPrefs);
+    inp.value = v;
+    if (!silent) toast(v ? '레퍼런스 링크를 저장했어요' : '레퍼런스 링크를 지웠어요');
+    return v;
+  }
+
+  document.addEventListener('change', function (e) {
+    if (!currentId) return;
+    if (e.target.classList && e.target.classList.contains('aff-input')) saveAff(true);
+    if (e.target.classList && e.target.classList.contains('ref-input')) saveRef(true);
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!currentId) return;
+
+    var pipe = e.target.closest('[data-pipe]');
+    if (pipe) {
+      saveAff(true);
+      saveRef(true);
+      var st = pipe.dataset.pipe;
+      setStatus(currentId, st);
+      renderStudio(currentNote());
+      renderList();
+      toast('진행 상태: ' + STATUS_META[st].label);
+      return;
+    }
+
+    var btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    var action = btn.dataset.action;
+    var n = currentNote();
+    if (!n) return;
+
+    if (action === 'copy-script') {
+      var text = scriptText(n);
+      if (!text) return;
+      copyText(text).then(function (ok) {
+        toast(ok ? '15초 대본을 복사했어요' : '복사가 안 됐어요', !ok);
+      });
+      return;
+    }
+    if (action === 'copy-caption') {
+      var ctext = captionText(n);
+      if (!ctext) return;
+      copyText(ctext).then(function (ok) {
+        toast(ok ? '캡션·해시태그·고정 댓글을 복사했어요' : '복사가 안 됐어요', !ok);
+      });
+      return;
+    }
+    if (action === 'aff-save') { saveAff(false); return; }
+    if (action === 'aff-open') {
+      var url = saveAff(true);
+      if (!url) { toast('제휴 링크를 먼저 넣어 주세요', true); return; }
+      window.open(url, '_blank', 'noopener');
+      return;
+    }
+    if (action === 'aff-copy') {
+      var aff = affOf(n) || (document.querySelector('.aff-input') || {}).value || '';
+      aff = normalizeUrl(aff);
+      if (!aff) { toast('제휴 링크를 먼저 넣어 주세요', true); return; }
+      copyText(aff).then(function (ok) {
+        toast(ok ? '제휴 링크를 복사했어요' : '복사가 안 됐어요', !ok);
+      });
+      return;
+    }
+    if (action === 'ref-open') {
+      var rurl = saveRef(true);
+      if (!rurl) { toast('레퍼런스 링크를 먼저 넣어 주세요', true); return; }
+      window.open(rurl, '_blank', 'noopener');
+    }
+  });
+
   function openNote(id) {
     var n = allNotes().filter(function (x) { return x.id === id; })[0];
     if (!n) return;
@@ -397,6 +704,7 @@
     $('sheetTitle').textContent = n.title;
     $('sheetMeta').textContent = (n.date || '') + ((n.tags || []).length ? ' · ' + n.tags.map(function (t) { return '#' + t; }).join(' ') : '');
     renderInstaCard(n);
+    renderStudio(n);
     $('sheetBody').innerHTML = blocksHTML(n);
     $('sheetLinks').innerHTML = linksHTML(n);
 
@@ -488,6 +796,23 @@
   /* ── 새 메모 ── */
   var pickCat = 'memo';
   var pickSub = null;
+  var pickStatus = 'idea';
+
+  function renderStatusPick() {
+    var el = $('fStatus');
+    if (!el) return;
+    el.innerHTML = STATUS_ORDER.map(function (s) {
+      return '<button type="button" role="radio" class="st-' + s + '" data-pick-status="' + s + '" aria-checked="' + (pickStatus === s) + '">' +
+        '<span aria-hidden="true">' + STATUS_META[s].icon + '</span>' + STATUS_META[s].label + '</button>';
+    }).join('');
+  }
+
+  $('fStatus').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-pick-status]');
+    if (!b) return;
+    pickStatus = b.dataset.pickStatus;
+    renderStatusPick();
+  });
 
   function renderPick() {
     var el = $('fCategory');
@@ -533,10 +858,12 @@
     if (!$('sheet').hidden) { $('sheet').classList.remove('show'); $('sheet').hidden = true; }
     pickCat = state.cat === 'all' ? 'memo' : state.cat;
     pickSub = state.sub === 'all' ? null : state.sub;
+    pickStatus = 'idea';
     if (!catMap[pickCat]) pickCat = 'memo';
     $('fTitle').classList.remove('invalid');
     renderPick();
     renderSubPick();
+    renderStatusPick();
     showSheet($('formSheet'), true);
     setTimeout(function () { $('fTitle').focus(); }, 320);
   }
@@ -571,6 +898,23 @@
     var c = catMap[pickCat] || CATS[0];
     var sObj = (c.subs || []).filter(function (x) { return x.id === pickSub; })[0];
 
+    var hook = $('fScriptHook').value.trim();
+    var core = $('fScriptCore').value.replace(/\r\n/g, '\n').trim();
+    var cta = $('fScriptCta').value.trim();
+    var captionRaw = $('fCaption').value.replace(/\r\n/g, '\n').trim();
+    var hashtags = captionRaw.match(/#[^\s#]+/g) || [];
+    var caption = captionRaw
+      .replace(/#[^\s#]+/g, '')
+      .replace(/[ \t]+\n/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+    var pinned = $('fPinned').value.replace(/\r\n/g, '\n').trim();
+    var affiliate = normalizeUrl($('fAffiliate').value);
+    var refUrl = normalizeUrl($('fRefUrl').value);
+    var viral = $('fViral').value.trim();
+    var hasScriptData = !!(hook || core || cta);
+    var hasCreatorData = hasScriptData || !!(caption || hashtags.length || pinned || affiliate || refUrl || viral);
+
     var first = blocks.length ? strip(blocks[0].text) : '';
     var note = {
       id: 'u-' + Date.now().toString(36),
@@ -578,19 +922,31 @@
       sub: sObj ? sObj.id : null,
       title: title,
       summary: first.length > 120 ? first.slice(0, 120) + '…' : first,
-      tags: [],
+      tags: hashtags.slice(0, 4).map(function (t) { return t.replace(/^#/, ''); }),
       date: today(),
-      instaReady: !!$('fInsta').checked,
-      instaHook: null,
+      instaReady: !!$('fInsta').checked || hasCreatorData,
+      instaHook: hook || null,
+      status: pickStatus,
+      script: hasScriptData ? { hook: hook, core: core, cta: cta } : null,
+      caption: caption,
+      hashtags: hashtags,
+      pinnedComment: pinned,
+      affiliateUrl: affiliate,
+      refUrl: refUrl,
+      viralReason: viral,
       blocks: blocks,
       links: links
     };
+
+    if (affiliate) { affPrefs[note.id] = affiliate; save(STORE_AFF, affPrefs); }
+    if (refUrl) { refPrefs[note.id] = refUrl; save(STORE_REF, refPrefs); }
 
     userNotes.unshift(note);
     var ok = save(STORE_NOTES, userNotes);
     closeSheets();
     state.cat = 'all';
     state.sub = 'all';
+    state.status = 'all';
     searchEl.value = '';
     clearEl.hidden = true;
     state.q = '';
