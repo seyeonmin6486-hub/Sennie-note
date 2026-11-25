@@ -243,8 +243,8 @@
             (sn ? '<span class="sub-label">' + esc(sn) + '</span>' : '') +
             (isInsta(n) ? '<span class="insta-dot" aria-label="인스타 소재">📱</span>' : '') +
           '</div>' +
-          '<h2 class="card-title">' + highlight(n.title, q) + '</h2>' +
-          '<p class="card-desc">' + highlight(desc, q) + '</p>' +
+          '<span class="card-title">' + highlight(n.title, q) + '</span>' +
+          '<span class="card-desc">' + highlight(desc, q) + '</span>' +
           '<div class="card-foot">' + tags +
             '<svg class="card-arrow" viewBox="0 0 24 24" aria-hidden="true">' +
               '<path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
@@ -530,6 +530,7 @@
 
   function openForm() {
     $('noteForm').reset();
+    if (!$('sheet').hidden) { $('sheet').classList.remove('show'); $('sheet').hidden = true; }
     pickCat = state.cat === 'all' ? 'memo' : state.cat;
     pickSub = state.sub === 'all' ? null : state.sub;
     if (!catMap[pickCat]) pickCat = 'memo';
@@ -609,6 +610,7 @@
   var scrimEl = $('scrim');
 
   function showSheet(sheet, isForm) {
+    clearTimeout(sheet._hideTimer);
     if (!sheet.hidden && sheet.classList.contains('show')) return;
     lastFocus = document.activeElement;
     if (!isForm && !$('sheet').hidden) { $('sheet').classList.remove('show'); $('sheet').hidden = true; }
@@ -628,7 +630,8 @@
     [$('sheet'), $('formSheet')].forEach(function (s) {
       if (!s || s.hidden) return;
       s.classList.remove('show');
-      setTimeout(function () { s.hidden = true; }, 280);
+      clearTimeout(s._hideTimer);
+      s._hideTimer = setTimeout(function () { s.hidden = true; }, 280);
     });
     scrimEl.classList.remove('show');
     setTimeout(function () { scrimEl.hidden = true; }, 240);

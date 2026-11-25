@@ -380,23 +380,23 @@ a { color: inherit; }
 .chip .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .85; }
 
 .card-title {
+  display: -webkit-box;
   margin: 0 0 6px;
   font-size: 17.5px;
   font-weight: 700;
   line-height: 1.42;
   letter-spacing: -0.032em;
   color: var(--ink);
-  display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 .card-desc {
+  display: -webkit-box;
   margin: 0;
   font-size: 14px;
   line-height: 1.62;
   color: var(--ink-2);
-  display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -518,6 +518,7 @@ mark { background: #FBE3B8; color: inherit; border-radius: 4px; padding: 0 1px; 
   bottom: 0;
   margin: 0 auto;
   max-width: 720px;
+  max-height: 92vh;
   max-height: 92dvh;
   display: flex;
   flex-direction: column;
@@ -561,6 +562,8 @@ mark { background: #FBE3B8; color: inherit; border-radius: 4px; padding: 0 1px; 
 .icon-btn:active { background: #E9E1D5; }
 
 .sheet-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
@@ -719,7 +722,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .btn-copy.done { background: #2F6B4A; }
 
 /* 폼 */
-.sheet-form { max-height: 94dvh; }
+.sheet-form { max-height: 94vh; max-height: 94dvh; }
 .form-title { margin: 0; font-size: 18px; font-weight: 750; letter-spacing: -0.03em; }
 .form { display: flex; flex-direction: column; gap: 16px; padding-top: 16px; }
 .field { display: flex; flex-direction: column; gap: 8px; }
@@ -767,7 +770,13 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 .link-inputs { display: grid; gap: 8px; }
 .form-note { margin: -2px 0 0; font-size: 12.5px; color: var(--muted); }
-.form-foot { padding-bottom: 6px; }
+.form-foot {
+  position: sticky;
+  bottom: 0;
+  margin-top: 2px;
+  padding: 10px 0 4px;
+  background: #fff;
+}
 
 /* 토스트 */
 .toast {

@@ -10,6 +10,7 @@ window.SENNI_CATEGORIES = [
     subs: [
       { id: 'main',    name: '집밥·메인' },
       { id: 'snack',   name: '집밥·간식' },
+      { id: 'ramen',   name: '라면·분식' },
       { id: 'sauce',   name: '소스·시즈닝' },
       { id: 'dessert', name: '디저트' },
       { id: 'storage', name: '보관법' }
@@ -40,6 +41,8 @@ window.SENNI_CATEGORIES = [
     color: '#8A6FB0', soft: '#EFE8F6', ink: '#664A8A',
     subs: [
       { id: 'aivideo',  name: 'AI 영상 제작' },
+      { id: 'script',   name: '대본·프롬프트' },
+      { id: 'shorts',   name: '숏폼 제작' },
       { id: 'money',    name: '인스타 수익화' },
       { id: 'automate', name: '편집 자동화' },
       { id: 'blog',     name: '블로그' }
@@ -364,21 +367,30 @@ window.SENNI_NOTES = [
     id: 'n-wedding-bag',
     cat: 'living', sub: 'tips',
     title: '결혼식 가방순이 필수템 체크리스트',
-    summary: '가위·안전핀부터 보조배터리·상비약까지, 챙길 것 한 번에.',
+    summary: '예식 1시간 10분 전 도착 · 가방 2개 · 지인 식권 20~30장까지.',
     tags: ['결혼식', '가방순이', '체크리스트', '준비물'],
     instaReady: true,
-    instaHook: '가방순이 필수템 8개, 결혼식 전날 체크리스트',
+    instaHook: '가방순이 필수템, 이거 없으면 진짜 난감해요',
     date: '2026-11-26',
     blocks: [
+      { type: 'callout', tone: 'info', icon: '⏰', text: '예식 <strong>1시간 10분 전</strong> 도착 목표. 가방은 본인용·신부용 <strong>2개</strong> 모두 클로징 되는 걸로 챙기기.' },
       { type: 'checklist', items: [
+        '본인용 가방 (클로징 되는 것)',
+        '신부용 가방 (클로징 되는 것)',
+        '편한 신발',
+        '지인용 식권 20~30장 미리 챙기기',
+        '마시는 청심환',
+        '이클립스',
+        '빨대 꽂은 물',
+        '초콜릿·사탕',
+        '축의금 봉투 (여분)',
         '작은 가위',
         '안전핀 (드레스·옷핀)',
-        '물티슈·티슈',
         '보조배터리',
-        '립밤·거울',
-        '여분 축의금 봉투',
+        '물티슈·티슈',
         '네임펜',
-        '상비약 (두통약·밴드)'
+        '상비약 (두통약·밴드)',
+        '립밤·거울'
       ] }
     ],
     links: []
@@ -563,6 +575,83 @@ window.SENNI_NOTES = [
         '클립·숏폼 라인으로 확장한다.'
       ] },
       { type: 'callout', tone: 'warn', icon: '⚠️', text: '처음부터 광고판처럼 만들면 검색 노출이 떨어질 수 있어요. 순서를 지키는 게 답.' }
+    ],
+    links: []
+  },
+  /* ───────── 추가: 라면·분식 ───────── */
+  {
+    id: 'n-jjaegaechi',
+    cat: 'cooking', sub: 'ramen',
+    title: "전라도 아재 비법 '짜계치' 황금 레시피",
+    summary: '물 300ml만. 액젓 반 숟갈·설탕 반 숟갈을 처음부터 넣고 같이 끓이기.',
+    tags: ['짜계치', '라면', '짜장라면', '꿀조합'],
+    instaReady: true,
+    instaHook: '짜계치 물 300ml, 처음부터 다 넣고 끓이면 끝',
+    date: '2026-11-26',
+    blocks: [
+      { type: 'p', text: '출처: feed.on.kr' },
+      { type: 'table', head: ['재료', '분량'], rows: [
+        ['물', '300ml'],
+        ['참치액젓 (또는 꽃게·홍게 액젓)', '커피숟갈 1/2'],
+        ['설탕', '커피숟갈 1/2'],
+        ['들기름', '커피숟갈 1']
+      ] },
+      { type: 'h', text: '핵심 순서' },
+      { type: 'ol', items: [
+        '물은 <strong>300ml</strong>만 넣는다.',
+        '가루스프 + 건더기스프 + 참치액젓 반 숟갈 + 설탕 반 숟갈을 <strong>처음부터 다</strong> 넣는다.',
+        '같이 끓여서 면에 간이 배게 한다.',
+        '마지막에 <strong>들기름 커피숟갈 1개</strong>를 뿌려 마무리한다.'
+      ] },
+      { type: 'callout', tone: 'info', icon: '✨', text: '들기름이 비린내를 잡고 감칠맛을 확 올려줘요.' }
+    ],
+    links: []
+  },
+
+  /* ───────── 추가: 인스타·부업 ───────── */
+  {
+    id: 'n-shorts-script',
+    cat: 'insta', sub: 'script',
+    title: '쇼핑 숏폼·릴스 터지는 4단계 대본 공식',
+    summary: '경쟁 훅 10개 수집 → 리뷰 30개로 15초 대본 → 생활 장면으로 교체 → 3초 A/B 3세트.',
+    tags: ['숏폼', '릴스', '대본', '후킹'],
+    instaReady: true,
+    instaHook: '쇼핑 숏폼 터지는 대본, 4단계면 됩니다',
+    date: '2026-11-26',
+    blocks: [
+      { type: 'p', text: '출처: ai.balt' },
+      { type: 'ol', items: [
+        '웹 검색으로 잘 팔리는 경쟁 숏폼의 <strong>첫 3초 후킹 문장 10개</strong>와 <strong>패턴 5가지</strong>를 모은다.',
+        '실제 제품 리뷰 30개를 붙여서 <strong>“지갑 연 이유 3가지”</strong>로 15초 대본을 짠다.',
+        '광고 티 나는 지루한 설명은 잘라내고 <strong>“생활 속 장면 묘사 1줄”</strong>로 교체한다.',
+        '첫 3초 <strong>A/B 테스트 3세트</strong>(공포형 · 숫자형 · 반전형)를 뽑아 둔다.'
+      ] },
+      { type: 'callout', tone: 'info', icon: '🎬', text: '첫 3초만 바꿔 3세트를 돌려 보면 어떤 훅이 먹히는지 데이터로 남아요.' }
+    ],
+    links: []
+  },
+  {
+    id: 'n-ai-shopping-shorts',
+    cat: 'insta', sub: 'shorts',
+    title: 'AI 쇼핑 숏폼 8단계 프롬프트 & 레퍼런스',
+    summary: '상품 사진 3장 → 15초 영상. 자막·하이라이트·색감까지 한 번에.',
+    tags: ['숏폼', '프롬프트', '마브로', '쇼츠'],
+    instaReady: true,
+    instaHook: '상품 사진 3장으로 쇼핑 숏폼 만드는 순서',
+    date: '2026-11-26',
+    blocks: [
+      { type: 'h', text: '프롬프트 흐름' },
+      { type: 'ol', items: [
+        '상품 사진 3장으로 <strong>15초 영상</strong>을 만든다.',
+        '<strong>3초 훅 + 15초 구매 대본</strong>을 붙인다.',
+        '음소거로 봐도 읽히게 <strong>큰 가격·할인율 자막</strong>을 넣는다.',
+        '긴 리뷰에서 <strong>15초 하이라이트 5개</strong>를 추출한다.',
+        '택배상자 배경을 지우고 색감을 보정한다.',
+        '시리즈끼리 톤을 통일한다.'
+      ] },
+      { type: 'h', text: '레퍼런스' },
+      { type: 'p', text: '<strong>마브로(mavro)</strong> — 반응 좋았던 브랜드 협찬 릴스·쇼츠를 품목별로 모아 둔 벤치마킹 사이트.' },
+      { type: 'callout', tone: 'info', icon: '🔍', text: '유튜브 쇼츠는 크롬 시크릿모드로 “구독자 대비 조회수 높은 영상”을 찾아 그 편집법을 벤치마킹.' }
     ],
     links: []
   }
