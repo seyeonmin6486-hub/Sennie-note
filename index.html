@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>센니 노트 · 살림·레시피·최저가 기록</title>
+<meta name="description" content="센니의 살림, 레시피, 최저가 구매 기록을 한 곳에 모아두는 개인 노트." />
+<meta name="theme-color" content="#FAF7F2" />
+<meta name="color-scheme" content="light" />
+
+<!-- iOS 홈 화면 추가 (PWA) -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="센니 노트" />
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+
+<link rel="manifest" href="./manifest.json" />
+<link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+<link rel="stylesheet" href="./assets/style.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <header class="topbar" id="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="32" height="32" role="img">
+          <rect width="32" height="32" rx="9" fill="#C0714C"/>
+          <rect x="9" y="6.5" width="14" height="19" rx="3.2" fill="#FBF7F1"/>
+          <rect x="9" y="6.5" width="4" height="19" rx="2" fill="#EFDFCF"/>
+          <rect x="15.5" y="11" width="5.5" height="1.6" rx=".8" fill="#3A332B"/>
+          <rect x="15.5" y="15" width="5.5" height="1.6" rx=".8" fill="#3A332B"/>
+          <rect x="15.5" y="19" width="3.6" height="1.6" rx=".8" fill="#B9AE9E"/>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <strong>센니 노트</strong>
+        <small>살림 · 레시피 · 최저가 기록</small>
+      </span>
+    </div>
+
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M16 16l4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="search" class="search" type="search" inputmode="search" autocomplete="off"
+             placeholder="제목 · 내용 · 태그로 찾기" aria-label="노트 검색" />
+      <button id="clearSearch" class="search-clear" type="button" aria-label="검색어 지우기" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <nav class="tabs" id="tabs" aria-label="카테고리"></nav>
+    <div class="subtabs" id="subtabs" role="tablist" aria-label="세부 카테고리" hidden></div>
+  </header>
+
+  <main class="content">
+    <div class="list-head">
+      <h1 class="list-title" id="listTitle">전체 노트</h1>
+      <span class="list-count" id="listCount"></span>
+    </div>
+
+    <section class="cards" id="cards" aria-live="polite"></section>
+
+    <div class="empty" id="empty" hidden>
+      <div class="empty-emoji" aria-hidden="true">🗒️</div>
+      <p class="empty-title" id="emptyTitle">노트가 없어요</p>
+      <p class="empty-desc" id="emptyDesc">새 메모를 추가해 보세요.</p>
+      <button type="button" class="btn btn-primary" data-action="new">+ 새 메모 쓰기</button>
+    </div>
+
+    <footer class="foot">
+      <p>센니 노트 · 내가 쓴 메모는 이 기기에만 저장돼요</p>
+    </footer>
+  </main>
+
+  <button class="fab" id="fab" type="button" aria-label="새 메모 쓰기">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    <span>새 메모</span>
+  </button>
+</div>
+
+<!-- 상세 시트 -->
+<div class="scrim" id="scrim" hidden></div>
+
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+  <div class="sheet-grip" aria-hidden="true"></div>
+  <div class="sheet-head">
+    <span class="chip" id="sheetChip"></span>
+    <button class="icon-btn" type="button" id="closeSheet" aria-label="닫기">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <div class="sheet-scroll" id="sheetScroll">
+    <h2 class="sheet-title" id="sheetTitle"></h2>
+    <p class="sheet-meta" id="sheetMeta"></p>
+    <div class="insta-card" id="sheetInsta" hidden></div>
+    <div class="sheet-body" id="sheetBody"></div>
+
+    <div class="links" id="sheetLinks"></div>
+
+    <div class="danger" id="dangerZone" hidden>
+      <button class="btn btn-ghost-danger" type="button" id="deleteBtn">이 메모 삭제</button>
+      <div class="confirm" id="confirmDelete" hidden>
+        <span>정말 삭제할까요?</span>
+        <div class="confirm-actions">
+          <button class="btn btn-small" type="button" id="cancelDelete">취소</button>
+          <button class="btn btn-small btn-danger" type="button" id="confirmDeleteBtn">삭제</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-foot" id="sheetFoot">
+    <button class="btn btn-primary btn-copy" type="button" id="copyBtn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="11" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 6.6A2.4 2.4 0 0 0 12.6 4.5H6.9A2.4 2.4 0 0 0 4.5 6.9v7.9a2.4 2.4 0 0 0 2.1 2.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span id="copyLabel">전체 복사</span>
+    </button>
+  </div>
+</section>
+
+<!-- 새 메모 시트 -->
+<section class="sheet sheet-form" id="formSheet" role="dialog" aria-modal="true" aria-labelledby="formTitle" hidden>
+  <div class="sheet-grip" aria-hidden="true"></div>
+  <div class="sheet-head">
+    <h2 class="form-title" id="formTitle">새 메모</h2>
+    <button class="icon-btn" type="button" id="closeForm" aria-label="닫기">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <form class="sheet-scroll form" id="noteForm" novalidate>
+    <label class="field">
+      <span class="field-label">제목</span>
+      <input id="fTitle" type="text" maxlength="80" placeholder="예) 다이소 수납 아이디어" required />
+    </label>
+
+    <div class="field">
+      <span class="field-label">카테고리</span>
+      <div class="pick" id="fCategory" role="radiogroup" aria-label="카테고리 선택"></div>
+    </div>
+
+    <label class="field">
+      <span class="field-label">내용</span>
+      <textarea id="fBody" rows="7" placeholder="기억해 둘 내용을 편하게 적어 주세요.&#10;줄바꿈은 그대로 살아나요."></textarea>
+    </label>
+
+    <div class="field">
+      <span class="field-label">링크 <em>선택</em></span>
+      <div class="link-inputs">
+        <input id="fLinkLabel" type="text" maxlength="40" placeholder="링크 이름 (예) 쿠팡 상품" />
+        <input id="fLinkUrl" type="url" inputmode="url" placeholder="https://..." />
+      </div>
+    </div>
+
+    <label class="switch-row">
+      <span class="switch-copy">
+        <b>📱 인스타 소재로 표시</b>
+        <small>릴스·카드뉴스로 쓸 만한 메모면 켜 두세요</small>
+      </span>
+      <input type="checkbox" id="fInsta" class="switch" />
+    </label>
+
+    <p class="form-note">메모는 이 기기(브라우저)에만 저장돼요.</p>
+    <div class="form-foot">
+      <button class="btn btn-primary btn-block" type="submit" id="saveBtn">저장하기</button>
+    </div>
+  </form>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="./assets/data.js"></script>
+<script src="./assets/app.js"></script>
+</body>
+</html>

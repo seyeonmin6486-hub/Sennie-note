@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="센니 노트">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#CB815C"/>
+      <stop offset="0.55" stop-color="#C0714C"/>
+      <stop offset="1" stop-color="#A65C3C"/>
+    </linearGradient>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFDF9"/>
+      <stop offset="1" stop-color="#F7EFE4"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
+  <rect x="126" y="104" width="260" height="304" rx="42" fill="url(#page)"/>
+  <path d="M168 104h-20a42 42 0 0 0-42 42v220a42 42 0 0 0 42 42h20z" fill="#EFDFCF"/>
+  <g fill="#C99E7C">
+    <circle cx="152" cy="170" r="8"/>
+    <circle cx="152" cy="256" r="8"/>
+    <circle cx="152" cy="342" r="8"/>
+  </g>
+  <g fill="#3A332B">
+    <rect x="204" y="178" width="146" height="18" rx="9"/>
+    <rect x="204" y="222" width="112" height="18" rx="9"/>
+  </g>
+  <rect x="204" y="272" width="146" height="14" rx="7" fill="#C6B9A8"/>
+  <rect x="204" y="304" width="96" height="14" rx="7" fill="#C6B9A8"/>
+  <path d="M358 305C375 318 375 350 358 363C341 350 341 318 358 305Z" fill="#6E8F6B"/>
+  <path d="M358 307L358 351" fill="none" stroke="#5C7A59" stroke-width="2.4" stroke-linecap="round"/>
+</svg>
