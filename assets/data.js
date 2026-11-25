@@ -22,7 +22,8 @@ window.SENNI_CATEGORIES = [
     subs: [
       { id: 'body',       name: '바디·사우나' },
       { id: 'hair',       name: '헤어' },
-      { id: 'supplement', name: '영양제' }
+      { id: 'supplement', name: '영양제' },
+      { id: 'daisocosmetic', name: '다이소·코덕' }
     ]
   },
   {
@@ -31,7 +32,9 @@ window.SENNI_CATEGORIES = [
     subs: [
       { id: 'compare', name: '쇼핑·비교' },
       { id: 'daiso',   name: '다이소·수납' },
+      { id: 'daisolife', name: '다이소·생활' },
       { id: 'travel',  name: '여행·쇼핑' },
+      { id: 'food',    name: '여행·맛집' },
       { id: 'tips',    name: '생활·꿀팁' },
       { id: 'claim',   name: '병원·보험' }
     ]
@@ -44,6 +47,7 @@ window.SENNI_CATEGORIES = [
       { id: 'script',   name: '대본·프롬프트' },
       { id: 'shorts',   name: '숏폼 제작' },
       { id: 'money',    name: '인스타 수익화' },
+      { id: 'thread',   name: '스레드·제휴' },
       { id: 'automate', name: '편집 자동화' },
       { id: 'blog',     name: '블로그' }
     ]
@@ -652,6 +656,169 @@ window.SENNI_NOTES = [
       { type: 'h', text: '레퍼런스' },
       { type: 'p', text: '<strong>마브로(mavro)</strong> — 반응 좋았던 브랜드 협찬 릴스·쇼츠를 품목별로 모아 둔 벤치마킹 사이트.' },
       { type: 'callout', tone: 'info', icon: '🔍', text: '유튜브 쇼츠는 크롬 시크릿모드로 “구독자 대비 조회수 높은 영상”을 찾아 그 편집법을 벤치마킹.' }
+    ],
+    links: []
+  },
+
+  /* ───────── 추가: 스레드·숏폼·요리 인스타 ───────── */
+  {
+    id: 'n-thread-affiliate',
+    cat: 'insta', sub: 'thread',
+    title: '스레드 제휴 글 터지는 8단계 AI 프롬프트',
+    summary: '고민 캐내기 → 25자 오프닝 → 280자 본문 → 링크 유도 → 반박 대응.',
+    tags: ['스레드', '제휴', '프롬프트', '280자'],
+    instaReady: true,
+    instaHook: '스레드 제휴 글, 이 8단계로 씁니다',
+    date: '2026-11-26',
+    blocks: [
+      { type: 'p', text: '출처: playto876' },
+      { type: 'ol', items: [
+        '<strong>고민 캐내기</strong> — 타깃의 불평 5개를 뽑고 상품과 연결한다.',
+        '<strong>문제제기 오프닝</strong> — 25자 이내로 장면·감정을 묘사하고, 해결책은 늦게 꺼낸다.',
+        '<strong>3-1 사용 장면형</strong> — 메모를 기반으로 280자, “그 뒤로 이렇게 됐다”로 잇는다.',
+        '<strong>3-2 안 써본 상품형</strong> — 스펙·Q&A를 생활 언어로 번역한다. 체험 표현은 금지.',
+        '<strong>링크 유도</strong> — 자기선택형으로: “우리 집 크기에 맞는지 확인해 봐”.',
+        '<strong>3단 가격 추천</strong> — 저·중·고로 나눠 제안한다.',
+        '<strong>반박 댓글 대응</strong> — 제휴임을 솔직히 인정하고 단점 1개를 같이 쓴다.',
+        '<strong>연재형</strong> — 1편에는 링크를 넣지 않는다.',
+        '<strong>성과 비교 분석</strong> — 편별 반응을 비교해 다음 글에 반영한다.'
+      ] },
+      { type: 'callout', tone: 'info', icon: '🧵', text: '3-1(써본 상품)과 3-2(안 써본 상품) 중 뭘 쓸지 먼저 정하면 대본이 훨씬 빨라져요.' }
+    ],
+    links: []
+  },
+  {
+    id: 'n-claude-capcut',
+    cat: 'insta', sub: 'shorts',
+    title: '클로드 + 캡컷 30초 여행·일상 쇼츠 루틴',
+    summary: '클로드가 컷 설계, 캡컷은 자르기·자막. 영상 목록은 한 줄 메모로.',
+    tags: ['클로드', '캡컷', '쇼츠', '여행영상'],
+    instaReady: true,
+    instaHook: '30초 쇼츠, 클로드+캡컷으로 20분에',
+    date: '2026-11-26',
+    blocks: [
+      { type: 'p', text: '출처: th.aiinfo' },
+      { type: 'table', head: ['도구', '역할'], rows: [
+        ['클로드', '컷 설계'],
+        ['캡컷', '자르기 · 자막'],
+        ['영상 목록', '한 줄 메모']
+      ] },
+      { type: 'h', text: '클로드에 던지는 프롬프트' },
+      { type: 'p', text: '“30초 쇼츠에 쓸 장면 7개 골라서 순서·초수·한 줄 자막 정해줘”' },
+      { type: 'callout', tone: 'warn', icon: '💡', text: '영상 보면서 자르다 지치지 말고, 한 줄 메모로 장면을 먼저 고르세요.' }
+    ],
+    links: []
+  },
+  {
+    id: 'n-cooking-insta-rules',
+    cat: 'insta', sub: 'money',
+    title: '요리 인스타 하면서 깨달은 10가지 룰',
+    summary: '3시간 요리보다 10분 3분컷. 썸네일·계절감·냉털이 답.',
+    tags: ['요리인스타', '릴스', '썸네일', '조회수'],
+    instaReady: true,
+    instaHook: '요리 인스타, 3시간 정성보다 3분컷이 터집니다',
+    date: '2026-11-26',
+    blocks: [
+      { type: 'p', text: '출처: foodgasm.recipe · 캡처에서 확인된 5가지부터 정리.' },
+      { type: 'ul', items: [
+        '3시간 정성 요리보다 <strong>10분 자취생 3분컷</strong>이 조회수가 폭발한다.',
+        '썸네일은 자극적으로 — “이거 넣었더니 대기업 맛남”.',
+        '라면 + 불닭소스는 무적 치트키.',
+        '계절감을 탄다 — 여름 열무국수, 겨울 붕어빵·고구마.',
+        '냉털 요리가 잘 먹힌다.'
+      ] }
+    ],
+    links: []
+  },
+
+  /* ───────── 추가: 미용·건강 ───────── */
+  {
+    id: 'n-bath-5',
+    cat: 'beauty', sub: 'body',
+    title: '피로·붓기·생리통 잡는 입욕제 5종 비교',
+    summary: '근육 이완부터 쿨링·각질까지. 가격과 스쿱 양까지 정리.',
+    tags: ['입욕제', '반신욕', '붓기', '생리통'],
+    instaReady: true,
+    instaHook: '붓기·생리통엔 이 입욕제, 가격별로 정리했어요',
+    date: '2026-11-26',
+    blocks: [
+      { type: 'p', text: '출처: primmjena' },
+      { type: 'table', head: ['제품', '가격', '사용량', '언제'], rows: [
+        ['바스크린 초록이(마그네슘)·파랑이(칼슘)', '19,300원 / 9,900원', '뚜껑 1컵', '근육 이완'],
+        ['오리지널 약탕 입욕제 박하뇌', '30,500원', '3스쿱', '시원한 쿨링 (과다 투입 시 추움 주의)'],
+        ['딸라스파 발네오 배쓰 솔트', '67,000원', '2스쿱', '다리 부은 날 · 향기 최고'],
+        ['딸락스파 엑스폴리에이팅 마린 솔트', '77,000원', '2스쿱', '반신욕 + 묵은 각질 관리'],
+        ['휴온재 강화 어린약쑥 입욕제', '23,900원', '—', '몸 찬 날 · 생리 전후 찜질 느낌']
+      ] },
+      { type: 'callout', tone: 'info', icon: '🛁', text: '붓기엔 발네오, 찬 몸엔 어린약쑥, 각질엔 마린 솔트로 나눠 쓰면 좋아요.' }
+    ],
+    links: []
+  },
+  {
+    id: 'n-daiso-palette',
+    cat: 'beauty', sub: 'daisocosmetic',
+    title: '다이소 1,000원 4구 커스텀 팔레트 품번',
+    summary: '품번 343002431. 립·치크·크림 섀도우 소분해 들고 다니기.',
+    tags: ['다이소', '팔레트', '품번', '소분'],
+    instaReady: true,
+    instaHook: '다이소 1,000원으로 4구 팔레트 만들기',
+    date: '2026-11-26',
+    blocks: [
+      { type: 'table', head: ['품명', '내용'], rows: [
+        ['제품', '커스텀 수납케이스 이너 B (일본제)'],
+        ['품번', '343002431'],
+        ['가격', '1,000원'],
+        ['용도', '립 · 치크 · 크림 섀도우 소분 휴대용']
+      ] },
+      { type: 'callout', tone: 'info', icon: '💄', text: '품번 그대로 매장에 물어보거나 다이소 앱에 검색하면 바로 나와요.' }
+    ],
+    links: []
+  },
+
+  /* ───────── 추가: 살림·쇼핑 ───────── */
+  {
+    id: 'n-daiso-febreze',
+    cat: 'living', sub: 'daisolife',
+    title: '다이소 2,000원 향따템 페브리즈 다우니',
+    summary: '비싼 니치 향수보다 반응 좋았던 가성비 섬유향수.',
+    tags: ['다이소', '페브리즈', '섬유향수', '가성비'],
+    instaReady: true,
+    instaHook: '2,000원인데 향수보다 반응 좋은 섬유향수',
+    date: '2026-11-26',
+    blocks: [
+      { type: 'p', text: '다이소 <strong>2,000원</strong> 페브리즈 핑크 다우니향. 비싼 니치 향수보다 반응이 좋았던 가성비 섬유향수.' },
+      { type: 'table', head: ['제품', '가격', '구분'], rows: [
+        ['페브리즈 핑크 다우니향', '2,000원', '섬유향수']
+      ] }
+    ],
+    links: []
+  },
+  {
+    id: 'n-ulsan-food',
+    cat: 'living', sub: 'food',
+    title: '울산 로컬 맛집 도장깨기 리스트',
+    summary: '1점·2점·3점 단계별 29곳. 부라더고깃집부터 식신통삼겹구이까지.',
+    tags: ['울산맛집', '로컬', '도장깨기', '리스트'],
+    instaReady: true,
+    instaHook: '울산 로컬 맛집, 이 순서로 도장깨기',
+    date: '2026-11-26',
+    blocks: [
+      { type: 'p', text: '출처: hongyami_ · 가 본 곳은 체크해 두기.' },
+      { type: 'h', text: '1점 — 먼저 갈 곳' },
+      { type: 'checklist', items: [
+        '부라더고깃집', '샤랑도', '하동식당', '원조대구막창', '뚱이한우국밥',
+        '계원닭집', '조포닭발', '대밭골돼지국밥', '북경손짜장', '아키라'
+      ] },
+      { type: 'h', text: '2점' },
+      { type: 'checklist', items: [
+        '진미콩칼국수', '밀양시골밥상', '풍로옥', '산동만두', '연춘참숯석쇠구이',
+        '미진돌곱창', '경주손칼국수', '종가돼지국밥', '83왕소금구이', '정자항산오징어'
+      ] },
+      { type: 'h', text: '3점' },
+      { type: 'checklist', items: [
+        '변강쇠숯불촌', '산정생불고기', '가무댕댕', '돌집민물장어', '언양기와집불고기',
+        '청수골가든', '진하꽃게전문점', '거부돌곱창', '식신통삼겹구이'
+      ] }
     ],
     links: []
   }
