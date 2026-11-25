@@ -13,7 +13,7 @@
   var STORE_REF = 'senni-note.ref.v1';
 
   var STATUS_META = {
-    idea:     { label: '소재 쪔',     icon: '💡' },
+    idea:     { label: '소재 찜',     icon: '💡' },
     scripted: { label: '대본 완료',   icon: '✍️' },
     posted:   { label: '업로드 완료', icon: '✅' }
   };
@@ -62,7 +62,7 @@
       return STATUS_META[statusPrefs[n.id]] ? statusPrefs[n.id] : null;
     }
     if (n.status && STATUS_META[n.status]) return n.status;
-    return isInsta(n) ? 'idea' : null;
+    return 'idea';
   }
 
   function setStatus(id, st) {
