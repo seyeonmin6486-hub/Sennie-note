@@ -531,6 +531,8 @@ mark { background: #FBE3B8; color: inherit; border-radius: 4px; padding: 0 1px; 
   will-change: transform;
 }
 .sheet.show { transform: translateY(0); }
+/* hidden 상태에서는 화면을 덮지 않도록(넓은 화면에서 투명 시트가 클릭을 가로채는 문제 방지) */
+.sheet[hidden] { display: none; }
 
 .sheet-grip {
   width: 38px;
