@@ -1,12 +1,12 @@
 /* 센니 노트 서비스워커 — 오프라인에서도 열리고, 업데이트는 다음 실행에 반영 */
-var CACHE = 'senni-note-v6';
+var CACHE = 'senni-note-v7';
 var ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './assets/style.css',
-  './assets/app.js',
-  './assets/data.js',
+  './assets/style.css?v=6',
+  './assets/app.js?v=6',
+  './assets/data.js?v=6',
   './icons/icon.svg',
   './icons/icon-192.png',
   './icons/icon-512.png',
