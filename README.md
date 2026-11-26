@@ -22,7 +22,7 @@
 | `index.html` | 화면 뼈대 |
 | `assets/style.css` | 디자인 |
 | `assets/app.js` | 검색·필터·상세·메모 저장 로직 |
-| `assets/data.js` | **기본 내장 노트(31개) + 카테고리 정의** |
+| `assets/data.js` | **기본 내장 노트(36개) + 카테고리 정의** |
 | `manifest.json` | PWA 설치 정보 |
 | `sw.js` | 오프라인 캐시 |
 | `icons/` | 앱 아이콘 (SVG / PNG 192·512·maskable·apple-touch) |
